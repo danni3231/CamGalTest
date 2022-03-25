@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CamGalTest">
-        <!--
+
         <provider
             android:authorities="edu.co.icesi.camgaltest"
             android:name="androidx.core.content.FileProvider"
@@ -22,9 +22,8 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/pths" />
+                android:resource="@xml/paths" />
         </provider>
-        -->
 
         <activity
             android:name=".MainActivity"

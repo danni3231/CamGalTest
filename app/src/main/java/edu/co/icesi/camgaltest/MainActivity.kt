@@ -7,14 +7,16 @@ import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import edu.co.icesi.camgaltest.databinding.ActivityMainBinding
+import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var file: File
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -46,6 +48,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.camBtn.setOnClickListener{
             val i = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            file = File("${getExternalFilesDir(null)}/photo.png")
+            val uri = FileProvider.getUriForFile(this,"edu.co.icesi.camgaltest", file)
+            i.putExtra(MediaStore.EXTRA_OUTPUT,uri)
             camLauncher.launch(i)
         }
 
@@ -57,8 +62,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onCamaraResult(activityResult: ActivityResult) {
-      val bitmap = activityResult.data?.extras?.get("data") as Bitmap
-        binding.imageView.setImageBitmap(bitmap)
+        //val bitmap = activityResult.data?.extras?.get("data") as Bitmap
+        //binding.imageView.setImageBitmap(bitmap)
+
+        val bitmap = BitmapFactory.decodeFile(file.path)
+
+        //procesamiento
+        val scaledBitmap = Bitmap.createScaledBitmap(
+            bitmap,
+            bitmap.width/10,
+            bitmap.height/10,
+            true
+        )
+
+        binding.imageView.setImageBitmap(scaledBitmap)
+
 
     }
 
