@@ -1,13 +1,21 @@
 package edu.co.icesi.camgaltest
 
+import android.Manifest
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import edu.co.icesi.camgaltest.databinding.ActivityMainBinding
-import edu.co.icesi.camgaltest.modal.AddContactFragment
+
 
 class MainActivity : AppCompatActivity() {
 
-    private val binding:ActivityMainBinding by lazy{
+    private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
@@ -15,8 +23,52 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        binding.addBtn.setOnClickListener {
-            AddContactFragment.newInstance().show(supportFragmentManager, "addContact")
+        requestPermissions(arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA
+        ),11)
+
+        val galLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult(),::onGalleryResult
+        )
+
+        val camLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult(),::onCamaraResult
+        )
+
+
+        binding.galBtn.setOnClickListener {
+            val i = Intent(Intent.ACTION_GET_CONTENT)
+            i.type = "image/"
+            galLauncher.launch(i)
         }
+
+        binding.camBtn.setOnClickListener{
+            val i = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            camLauncher.launch(i)
+        }
+
+        binding.addBtn.setOnClickListener {
+            //AddContactFragment.newInstance().show(supportFragmentManager, "addContact")
+        }
+
+
+    }
+
+    private fun onCamaraResult(activityResult: ActivityResult) {
+      val bitmap = activityResult.data?.extras?.get("data") as Bitmap
+        binding.imageView.setImageBitmap(bitmap)
+
+    }
+
+    private fun onGalleryResult(activityResult: ActivityResult) {
+
+        val uri = activityResult.data?.data
+        val path = UtilDomi.getPath(this, uri!!)
+        val bitmap = BitmapFactory.decodeFile(path)
+
+        binding.imageView.setImageBitmap(bitmap)
+
     }
 }

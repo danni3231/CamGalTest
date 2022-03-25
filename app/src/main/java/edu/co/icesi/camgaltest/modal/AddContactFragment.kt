@@ -19,6 +19,7 @@ class AddContactFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
+        //make that the modal adapt to the dimensions of app
         dialog?.window?.setLayout(MATCH_PARENT, WRAP_CONTENT)
     }
 
